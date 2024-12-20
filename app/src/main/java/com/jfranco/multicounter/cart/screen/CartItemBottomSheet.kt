@@ -1,24 +1,38 @@
 package com.jfranco.multicounter.cart.screen
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -31,17 +45,18 @@ import com.jfranco.multicounter.cart.entity.CartItem
 fun CustomBottomSheets(
     modalSheetState: SheetState,
     cartItem: CartItem? = null,
-    onSaved: (CartItem) -> Unit,
+    onSave: (CartItem) -> Unit,
+    onDelete: (CartItem) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     var itemName by remember {
         mutableStateOf(cartItem?.name ?: "")
     }
     var itemPrice by remember {
-        mutableStateOf(cartItem?.price ?: 0.0)
+        mutableDoubleStateOf(cartItem?.price ?: 0.0)
     }
     var itemQuantity by remember {
-        mutableStateOf(cartItem?.quantity ?: 0)
+        mutableIntStateOf(cartItem?.quantity ?: 0)
     }
     ModalBottomSheet(
         modifier = Modifier.height((LocalConfiguration.current.screenHeightDp / 1.5).dp),
@@ -50,9 +65,8 @@ fun CustomBottomSheets(
         dragHandle = { BottomSheetDefaults.ExpandedShape }) {
         Column(
             Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxHeight(),
-
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
@@ -65,7 +79,6 @@ fun CustomBottomSheets(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-
 
             Column {
                 Text("Item Name")
@@ -94,6 +107,16 @@ fun CustomBottomSheets(
                 )
             }
 
+            if (cartItem != null) {
+                OutlinedButton(
+                    onClick = { onDelete(cartItem) },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, Color.Red),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                ) {
+                    Text("Delete")
+                }
+            }
 
             Button(onClick = {
                 val toSave =
@@ -103,7 +126,7 @@ fun CustomBottomSheets(
                             price = itemPrice,
                             quantity = itemQuantity
                         )
-                onSaved(toSave)
+                onSave(toSave)
             }, modifier = Modifier.fillMaxWidth()) {
                 Text(
                     if (cartItem == null) {

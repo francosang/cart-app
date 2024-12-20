@@ -30,16 +30,12 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,36 +45,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jfranco.multicounter.cart.entity.CartItem
+import com.jfranco.multicounter.ui.ScaffoldResultHandler
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun CartScreen(viewModel: CartViewModel = viewModel()) {
-    val items by viewModel.items.collectAsState()
+    val resultState by viewModel.state.collectAsState()
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showSheet by remember { mutableStateOf(false) }
-    var updatedTask: CartItem? = null
-    Scaffold(
+
+    ScaffoldResultHandler(
+        resultState = resultState,
         topBar = {
             Surface(shadowElevation = 5.dp) {
                 CenterAlignedTopAppBar(title = { Text("Cart") })
             }
         }
-    ) {
+    ) { state ->
+        val items = state.items
+
         Column(
             modifier = Modifier
-                .padding(it)
                 .padding(horizontal = 16.dp)
                 .fillMaxSize(),
         ) {
-            if (showSheet) {
-                CustomBottomSheets(modalSheetState = modalSheetState, updatedTask,
-                    onSaved = { item ->
-                        viewModel.addItem(item)
-                        showSheet = false
+            if (state.itemBottomState is ItemBottomSheetState.Open) {
+                CustomBottomSheets(
+                    modalSheetState = modalSheetState, state.itemBottomState.item,
+                    onDelete = { item ->
+                        viewModel.action(Action.DeleteItem(item))
+                    },
+                    onSave = { item ->
+                        viewModel.action(Action.SaveItem(item))
                     },
                     onDismissRequest = {
-                        showSheet = false
-                    }
+                        viewModel.action(Action.CloseBottomSheet)
+                    },
                 )
             }
             Box(
@@ -86,11 +87,12 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                     .padding(vertical = 16.dp)
                     .fillMaxWidth()
             ) {
-
-                Button(onClick = {
-                    updatedTask = null
-                    showSheet = true
-                }, modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = {
+                        viewModel.action(Action.CreateItem)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
                     Icon(Icons.Default.Add, contentDescription = "Icon")
                     Text("Add Item")
                 }
@@ -101,24 +103,22 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                     modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(items = items, key = { task -> task.id!! }) { task ->
+                    items(items = items, key = { task -> task.id ?: 0 }) { task ->
                         AnimatedVisibility(
                             visible = true,
                             enter = expandVertically(),
                             exit = shrinkVertically()
                         ) {
                             Box(Modifier.animateEnterExit(enter = scaleIn(), exit = scaleOut())) {
-                                KartItem(task, {
-                                    viewModel.removeItem(task)
-                                    updatedTask = null
-                                }) {
-                                    showSheet = true
-                                    updatedTask = task
-                                }
+                                KartItem(
+                                    task,
+                                    onClick = {
+                                        viewModel.action(Action.UpdateItem(task))
+                                    },
+                                )
                             }
                         }
                     }
-
                 }
             } else {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -130,7 +130,7 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
 }
 
 @Composable
-fun KartItem(cartItem: CartItem, onDelete: () -> Unit, onClick: () -> Unit) {
+fun KartItem(cartItem: CartItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

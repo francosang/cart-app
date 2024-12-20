@@ -2,7 +2,6 @@ package com.jfranco.multicounter.cart
 
 import android.content.Context
 import androidx.room.Room
-import com.jfranco.multicounter.cart.dao.CartItemsDao
 import com.jfranco.multicounter.cart.database.CartDatabase
 import com.jfranco.multicounter.cart.repository.CartItemsRepository
 import dagger.Module
@@ -23,12 +22,6 @@ object CartModule {
             CartDatabase::class.java,
             "cart_database"
         ).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideDao(appDatabase: CartDatabase): CartItemsDao {
-        return appDatabase.cartItemsDao()
     }
 
     @Provides

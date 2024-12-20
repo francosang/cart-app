@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.UUID
 
 sealed class Result<out V, out E> {
     data class Ok<V>(val value: V) : Result<V, Nothing>()
@@ -45,6 +45,6 @@ abstract class ScreenActionModel<A, S>(initialAction: A, initialState: S) : View
         }
     }
 
-    protected abstract fun handlers(action: A, currentState: S): S
+    protected abstract suspend fun handlers(action: A, previous: S): S
 
 }
