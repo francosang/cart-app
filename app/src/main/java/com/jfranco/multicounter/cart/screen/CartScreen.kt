@@ -50,7 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jfranco.multicounter.cart.entity.CartItem
 import com.jfranco.multicounter.ui.ScaffoldResultHandler
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(viewModel: CartViewModel = viewModel()) {
     val resultState by viewModel.state.collectAsState()
@@ -72,7 +72,8 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
         ) {
             if (state.itemBottomState is ItemBottomSheetState.Open) {
                 CustomBottomSheets(
-                    modalSheetState = modalSheetState, state.itemBottomState.item,
+                    modalSheetState = modalSheetState,
+                    cartItem = state.itemBottomState.item,
                     onDelete = { item ->
                         viewModel.action(Action.DeleteItem(item))
                     },
