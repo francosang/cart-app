@@ -10,7 +10,7 @@ import com.jfranco.multicounter.cart.entity.CartItem
         CartItem::class
     ],
     version = 1,
-    exportSchema = true,
+    exportSchema = false,
 )
 abstract class CartDatabase : RoomDatabase() {
     abstract fun cartItemsDao(): CartItemsDao

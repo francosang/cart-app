@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Multi Counter"
 include(":app")
 include(":core-state")
+include(":core-ui")

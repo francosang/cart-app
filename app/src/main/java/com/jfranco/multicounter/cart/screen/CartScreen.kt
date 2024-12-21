@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jfranco.multicounter.cart.entity.CartItem
-import com.jfranco.multicounter.ui.ScaffoldResultHandler
+import com.jfranco.multicounter.core.ui.ScaffoldResultHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

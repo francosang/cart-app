@@ -1,4 +1,4 @@
-package com.jfranco.multicounter.theme
+package com.jfranco.multicounter.core.theme
 
 import androidx.compose.ui.graphics.Color
 
