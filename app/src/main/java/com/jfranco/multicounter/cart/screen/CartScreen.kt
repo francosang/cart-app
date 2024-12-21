@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,9 +14,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -59,13 +60,12 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
             Surface(shadowElevation = 5.dp) {
                 CenterAlignedTopAppBar(title = { Text("Cart") })
             }
-        }
+        },
     ) { state ->
         val items = state.items
 
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
                 .fillMaxSize(),
         ) {
             if (state.itemBottomState is ItemBottomSheetState.Open) {
@@ -82,25 +82,22 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                     },
                 )
             }
-            Box(
-                Modifier
-                    .padding(vertical = 16.dp)
-                    .fillMaxWidth()
+            Button(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                onClick = {
+                    viewModel.action(Action.CreateItem)
+                },
             ) {
-                Button(
-                    onClick = {
-                        viewModel.action(Action.CreateItem)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Icon")
-                    Text("Add Item")
-                }
+                Icon(Icons.Default.Add, contentDescription = "Icon")
+                Text("Add Item")
             }
             if (items.isNotEmpty()) {
                 LazyColumn(
-                    reverseLayout = false,
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .weight(0.5F),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(items = items, key = { task -> task.id ?: 0 }) { task ->
@@ -119,6 +116,25 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                             }
                         }
                     }
+                }
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(Color.LightGray)
+                    )
+                    Box(
+                        Modifier.padding(16.dp),
+                    ) {
+                        Text(
+                            text = "Total: $${state.total}",
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                        )
+                    }
+
                 }
             } else {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

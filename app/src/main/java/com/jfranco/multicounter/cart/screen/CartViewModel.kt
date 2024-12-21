@@ -5,7 +5,6 @@ import com.jfranco.multicounter.cart.entity.CartItem
 import com.jfranco.multicounter.cart.handler.DeleteCartItem
 import com.jfranco.multicounter.cart.handler.ListenCartItems
 import com.jfranco.multicounter.cart.handler.SaveCartItem
-import com.jfranco.multicounter.cart.repository.CartItemsRepository
 import com.jfranco.multicounter.core.state.ScreenActionModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

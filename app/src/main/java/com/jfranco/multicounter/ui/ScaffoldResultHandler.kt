@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 fun <STATE, ERROR> ScaffoldResultHandler(
     resultState: Result<STATE, ERROR>,
     topBar: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable (STATE) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -26,6 +27,7 @@ fun <STATE, ERROR> ScaffoldResultHandler(
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = topBar,
+        bottomBar = bottomBar
     ) { innerPadding ->
         val state = when (resultState) {
             is Result.Err -> {
