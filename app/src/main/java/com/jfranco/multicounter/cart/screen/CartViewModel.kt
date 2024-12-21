@@ -2,7 +2,9 @@ package com.jfranco.multicounter.cart.screen
 
 import androidx.lifecycle.viewModelScope
 import com.jfranco.multicounter.cart.entity.CartItem
+import com.jfranco.multicounter.cart.handler.DecrementCartItemQuantity
 import com.jfranco.multicounter.cart.handler.DeleteCartItem
+import com.jfranco.multicounter.cart.handler.IncrementCartItemQuantity
 import com.jfranco.multicounter.cart.handler.ListenCartItems
 import com.jfranco.multicounter.cart.handler.SaveCartItem
 import com.jfranco.multicounter.core.state.ScreenActionModel
@@ -34,11 +36,13 @@ data class CartScreenState(
 
 sealed class Action {
     data class SetItems(val items: List<CartItem>) : Action()
-    data class UpdateItem(val item: CartItem) : Action()
-    data object CloseBottomSheet : Action()
+    data class ViewItemDetails(val item: CartItem) : Action()
+    data object CloseItemDetails : Action()
     data class DeleteItem(val item: CartItem) : Action()
     data object CreateItem : Action()
     data class SaveItem(val item: CartItem) : Action()
+    class IncrementQuantity(val item: CartItem) : Action()
+    class DecrementQuantity(val item: CartItem) : Action()
 }
 
 @HiltViewModel
@@ -46,8 +50,11 @@ class CartViewModel @Inject constructor(
     private val saveCartItem: SaveCartItem,
     private val deleteCartItem: DeleteCartItem,
     private val listenCartItems: ListenCartItems,
+    private val incrementCartItemQuantity: IncrementCartItemQuantity,
+    private val decrementCartItemQuantity: DecrementCartItemQuantity,
 ) :
-    ScreenActionModel<Action, CartScreenState>(Action.CloseBottomSheet, CartScreenState.Initial) {
+// TODO: remove need to pass initial action
+    ScreenActionModel<Action, CartScreenState>(Action.CloseItemDetails, CartScreenState.Initial) {
 
     init {
         viewModelScope.launch {
@@ -57,12 +64,19 @@ class CartViewModel @Inject constructor(
 
     override suspend fun handlers(action: Action, previous: CartScreenState): CartScreenState {
         return when (action) {
-            Action.CloseBottomSheet -> previous.copy(itemBottomState = ItemBottomSheetState.Closed)
+            Action.CloseItemDetails -> previous.copy(itemBottomState = ItemBottomSheetState.Closed)
             Action.CreateItem -> previous.copy(itemBottomState = ItemBottomSheetState.Open(null))
+            is Action.SetItems -> previous.copy(items = action.items, loading = false)
+            is Action.ViewItemDetails -> previous.copy(
+                itemBottomState = ItemBottomSheetState.Open(
+                    action.item
+                )
+            )
+            // Side effect handlers
             is Action.DeleteItem -> deleteCartItem(action, previous)
             is Action.SaveItem -> saveCartItem(action, previous)
-            is Action.UpdateItem -> previous.copy(itemBottomState = ItemBottomSheetState.Open(action.item))
-            is Action.SetItems -> previous.copy(items = action.items, loading = false)
+            is Action.DecrementQuantity -> decrementCartItemQuantity(action, previous)
+            is Action.IncrementQuantity -> incrementCartItemQuantity(action, previous)
         }
     }
 

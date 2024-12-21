@@ -1,5 +1,6 @@
 package com.jfranco.multicounter.cart.screen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -78,7 +80,7 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                         viewModel.action(Action.SaveItem(item))
                     },
                     onDismissRequest = {
-                        viewModel.action(Action.CloseBottomSheet)
+                        viewModel.action(Action.CloseItemDetails)
                     },
                 )
             }
@@ -100,18 +102,24 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
                         .weight(0.5F),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(items = items, key = { task -> task.id ?: 0 }) { task ->
+                    items(items = items, key = { item -> item.id ?: 0 }) { item ->
                         AnimatedVisibility(
                             visible = true,
                             enter = expandVertically(),
                             exit = shrinkVertically()
                         ) {
                             Box(Modifier.animateEnterExit(enter = scaleIn(), exit = scaleOut())) {
-                                KartItem(
-                                    task,
+                                CartItem(
+                                    item,
                                     onClick = {
-                                        viewModel.action(Action.UpdateItem(task))
+                                        viewModel.action(Action.ViewItemDetails(item))
                                     },
+                                    onIncrease = {
+                                        viewModel.action(Action.IncrementQuantity(item))
+                                    },
+                                    onDecrease = {
+                                        viewModel.action(Action.DecrementQuantity(item))
+                                    }
                                 )
                             }
                         }
@@ -146,7 +154,12 @@ fun CartScreen(viewModel: CartViewModel = viewModel()) {
 }
 
 @Composable
-fun KartItem(cartItem: CartItem, onClick: () -> Unit) {
+fun CartItem(
+    cartItem: CartItem,
+    onClick: () -> Unit,
+    onIncrease: (CartItem) -> Unit,
+    onDecrease: (CartItem) -> Unit,
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -218,9 +231,22 @@ fun KartItem(cartItem: CartItem, onClick: () -> Unit) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = {}) {
-                    Icon(Icons.Default.Remove, contentDescription = null)
+
+                AnimatedContent(
+                    targetState = cartItem.quantity == 1,
+                    label = "decrement animation"
+                ) { isSingleItem ->
+                    if (isSingleItem) {
+                        IconButton(onClick = { onDecrease(cartItem) }) {
+                            Icon(Icons.Default.Delete, tint = Color.Red, contentDescription = null)
+                        }
+                    } else {
+                        IconButton(onClick = { onDecrease(cartItem) }) {
+                            Icon(Icons.Default.Remove, contentDescription = null)
+                        }
+                    }
                 }
+
                 Box(
                     Modifier.defaultMinSize(minWidth = 40.dp),
                     contentAlignment = Alignment.Center
@@ -231,7 +257,7 @@ fun KartItem(cartItem: CartItem, onClick: () -> Unit) {
                         style = TextStyle(fontSize = 20.sp)
                     )
                 }
-                IconButton(onClick = {}) {
+                IconButton(onClick = { onIncrease(cartItem) }) {
                     Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
