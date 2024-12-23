@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
@@ -7,20 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.jfranco.multicounter"
+    namespace = "com.jfranco.multicounter.feature.cart.ui"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.jfranco.multicounter"
         minSdk = 21
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -39,41 +32,35 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 
 dependencies {
-    implementation(project(":features:cart:ui"))
-    implementation(project(":features:cart:module"))
+    implementation(project(":core-state"))
     implementation(project(":core-ui"))
+    implementation(project(":features:cart:core"))
+    implementation(project(":features:cart:model"))
+
+    implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(platform(libs.androidx.compose.bom))
+//    implementation(libs.androidx.ui.tooling.preview)
+//    implementation(libs.androidx.material.icons.extended)
 
     testImplementation(libs.junit)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
 }

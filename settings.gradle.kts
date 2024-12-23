@@ -23,3 +23,17 @@ rootProject.name = "Multi Counter"
 include(":app")
 include(":core-state")
 include(":core-ui")
+include(":features:cart:ui")
+include(":features:cart:core")
+include(":features:cart:model")
+include(":features:cart:data:specification")
+include(":features:cart:data:implementation-room")
+include(":features:cart:module")
+
+check(JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    """
+    Now in Android requires JDK 17+ but it is currently using JDK ${JavaVersion.current()}.
+    Java Home: [${System.getProperty("java.home")}]
+    https://developer.android.com/build/jdks#jdk-config-in-studio
+    """.trimIndent()
+}
