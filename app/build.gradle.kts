@@ -55,7 +55,7 @@ android {
 dependencies {
     implementation(project(":features:cart:ui"))
     implementation(project(":features:cart:module"))
-    implementation(project(":core-ui"))
+    implementation(project(":lib:lib-ui"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

@@ -39,8 +39,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-state"))
-    implementation(project(":core-ui"))
+    implementation(project(":lib:lib-state"))
+    implementation(project(":lib:lib-ui"))
     implementation(project(":features:cart:core"))
     implementation(project(":features:cart:model"))
 

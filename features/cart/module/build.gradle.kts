@@ -33,15 +33,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-state"))
+    implementation(project(":lib:lib-state"))
     implementation(project(":features:cart:model"))
     implementation(project(":features:cart:data:specification"))
     implementation(project(":features:cart:data:implementation-room"))
+    implementation(project(":features:cart:core"))
 
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(project(":features:cart:core"))
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.hilt.android)

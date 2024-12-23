@@ -21,8 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Multi Counter"
 include(":app")
-include(":core-state")
-include(":core-ui")
+include(":lib:lib-state")
+include(":lib:lib-ui")
 include(":features:cart:ui")
 include(":features:cart:core")
 include(":features:cart:model")

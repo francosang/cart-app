@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-state"))
+    implementation(project(":lib:lib-state"))
 
     implementation(libs.kotlinx.coroutines.core)
 

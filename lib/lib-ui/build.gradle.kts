@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-state"))
+    implementation(project(":lib:lib-state"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

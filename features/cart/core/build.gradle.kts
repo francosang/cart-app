@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-state"))
+    implementation(project(":lib:lib-state"))
     implementation(project(":features:cart:model"))
     implementation(project(":features:cart:data:specification"))
 
