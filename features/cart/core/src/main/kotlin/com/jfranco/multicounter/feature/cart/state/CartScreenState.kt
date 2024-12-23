@@ -16,7 +16,7 @@ data class CartScreenState(
     val total: Double = items.sumOf { it.price * it.quantity }
 
     companion object {
-        val Initial = CartScreenState(
+        val EmptyLoading = CartScreenState(
             loading = true,
             itemBottomState = ItemBottomSheetState.Closed,
             items = emptyList(),

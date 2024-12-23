@@ -1,7 +1,7 @@
 package com.jfranco.multicounter.feature.cart.ui.screen
 
 import androidx.lifecycle.viewModelScope
-import com.jfranco.multicounter.core.state.ScreenActionModel
+import com.jfranco.multicounter.core.state.ActionStateViewModel
 import com.jfranco.multicounter.feature.cart.action.Action
 import com.jfranco.multicounter.feature.cart.handler.DecrementCartItemQuantity
 import com.jfranco.multicounter.feature.cart.handler.DeleteCartItem
@@ -14,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val saveCartItem: SaveCartItem,
@@ -22,9 +21,7 @@ class CartViewModel @Inject constructor(
     private val listenCartItems: ListenCartItems,
     private val incrementCartItemQuantity: IncrementCartItemQuantity,
     private val decrementCartItemQuantity: DecrementCartItemQuantity,
-) :
-// TODO: remove need to pass initial action
-    ScreenActionModel<Action, CartScreenState>(Action.CloseItemDetails, CartScreenState.Initial) {
+) : ActionStateViewModel<Action, CartScreenState>(CartScreenState.EmptyLoading) {
 
     init {
         viewModelScope.launch {
